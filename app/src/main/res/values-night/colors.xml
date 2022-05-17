@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ripple_color_1">#737272</color>
+    <color name="background">#161616</color>
+    <color name="Dark_grey">#5C5C5C</color>
+    <color name="not_focused">#1D1E20</color>
+    <color name="ripple_color_2">#454649</color>
+    <color name="stroke">#005A25</color>
+</resources>

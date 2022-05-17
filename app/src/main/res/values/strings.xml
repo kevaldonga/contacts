@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Contacts</string>
+    <string name="contact_name">contact name</string>
+    <string name="phone_no">phone no</string>
+    <string name="_911234567890">+911234567890</string>
+    <string name="call_button">call button</string>
+    <string name="message_button">message button</string>
+    <string name="videocall_button">Videocall button</string>
+</resources>

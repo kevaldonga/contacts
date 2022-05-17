@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable-v24/item_selected.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable-v24/item_unselected.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/card_background.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/cardview_background.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/cardview_background_2.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/ic_call.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/ic_cross.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/ic_message.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/ic_video_call.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/item_background.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/seleted_item_background.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/activity_main.xml" value="0.4" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/item_view.xml" value="0.17844727694090382" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
