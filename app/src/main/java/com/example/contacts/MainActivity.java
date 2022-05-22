@@ -36,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
         }
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
             setContacts();
-        } else {
+        }
+        else {
             Toast.makeText(this, "Please allow permissions to work with us !!", Toast.LENGTH_SHORT).show();
         }
     }
