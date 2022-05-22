@@ -95,22 +95,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             return true;
         });
         holder.call.setOnClickListener(v -> {
-            if(!check_permissions()){
-                Toast.makeText(context, "please allow necessary permissions to work with us !!", Toast.LENGTH_SHORT).show();
-                return;
-            }
             Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + contacts.get(position).getPhone_no()));
             context.startActivity(intent);
         });
-    }
-
-    private boolean check_permissions() {
-        if((ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED)
-            && (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED)
-    && (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED)){
-            return true;
-        }
-        return false;
     }
 
     private void selected(viewHolder holder, int position) {
