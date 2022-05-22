@@ -1,17 +1,25 @@
 package com.example.contacts;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -86,6 +94,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
             return true;
         });
+        holder.call.setOnClickListener(v -> {
+            if(!check_permissions()){
+                Toast.makeText(context, "please allow necessary permissions to work with us !!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + contacts.get(position).getPhone_no()));
+            context.startActivity(intent);
+        });
+    }
+
+    private boolean check_permissions() {
+        if((ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED)
+            && (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED)
+    && (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED)){
+            return true;
+        }
+        return false;
     }
 
     private void selected(viewHolder holder, int position) {
@@ -168,6 +193,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         private final TextView phone_no;
         private final CircleImageView image, image2;
         private final ConstraintLayout expanded, parent;
+        private final ImageButton call, message, video_call;
 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
@@ -177,6 +203,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             image2 = itemView.findViewById(R.id.image2);
             expanded = itemView.findViewById(R.id.expanded_constraint_layout);
             parent = itemView.findViewById(R.id.parent);
+            call = itemView.findViewById(R.id.call);
+            message = itemView.findViewById(R.id.message);
+            video_call = itemView.findViewById(R.id.video);
         }
     }
 }

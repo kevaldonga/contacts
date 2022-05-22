@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -25,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     RecyclerView recyclerView;
     ArrayList<Contact> contacts;
     ImageButton remove_all;
@@ -33,9 +34,25 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode != 202){
+            return;
+        }
+        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] ==PackageManager.PERMISSION_GRANTED){
+            setContacts();
+        }
+        else {
+            Toast.makeText(this, "Please allow permissions to work with us !!", Toast.LENGTH_SHORT).show();
+            ask_permissions();
+        }
+    }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ask_permissions();
         remove_all = findViewById(R.id.remove_all);
         selected_items = findViewById(R.id.selected_items);
         recyclerView = findViewById(R.id.recycler_view);
@@ -43,19 +60,18 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(this,selected_items,appTitle,remove_all);
         contacts = new ArrayList<>();
-        setContacts();
         recyclerViewAdapter.setContacts(contacts);
         recyclerView.setAdapter(recyclerViewAdapter);
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void ask_permissions() {
+        requestPermissions(new String[]{Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS,Manifest.permission.CALL_PHONE}, 202);
+        onRequestPermissionsResult(202, new String[]{Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS,Manifest.permission.CALL_PHONE},new int[]{PackageManager.PERMISSION_GRANTED,PackageManager.PERMISSION_GRANTED,PackageManager.PERMISSION_GRANTED});
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setContacts() {
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_CONTACTS}, 1);
-        }
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_CONTACTS}, 2);
-        }
-        try {
             ContentResolver contentResolver = getContentResolver();
             Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
             Cursor cursor = contentResolver.query(uri, null, null, null);
@@ -90,9 +106,6 @@ public class MainActivity extends AppCompatActivity {
             }
             Log.i("contacts_details", "total contacts in your phone is " + cursor.getCount());
             cursor.close();
-        } catch (SecurityException e) {
-            Toast.makeText(MainActivity.this, "Please grant necessary permissions to work with us", Toast.LENGTH_SHORT).show();
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS}, 1);
         }
     }
 }
