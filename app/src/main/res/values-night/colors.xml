@@ -6,4 +6,5 @@
     <color name="not_focused">#1D1E20</color>
     <color name="ripple_color_2">#454649</color>
     <color name="stroke">#005A25</color>
+    <color name="purple_500">#6200EA</color>
 </resources>
