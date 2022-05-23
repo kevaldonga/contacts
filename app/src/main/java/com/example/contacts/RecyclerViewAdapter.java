@@ -99,6 +99,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + contacts.get(position).getPhone_no()));
             context.startActivity(intent);
         });
+        holder.message.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", contacts.get(position).getPhone_no(), null));
+            context.startActivity(intent);
+        });
     }
 
     private void selected(viewHolder holder, int position) {
