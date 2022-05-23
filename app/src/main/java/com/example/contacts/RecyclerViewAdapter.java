@@ -35,6 +35,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     List<Contact> selected_contacts = new ArrayList<>();
     TextView selectedItems,appTitle;
     ImageButton remove_all;
+    Toast toast;
     Context context;
 
     public RecyclerViewAdapter(Context context, TextView selectedItems, TextView appTitle, ImageButton remove_all) {
@@ -42,6 +43,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.remove_all = remove_all;
         this.appTitle = appTitle;
         this.selectedItems = selectedItems;
+        toast = new Toast(context);
     }
 
     @Override
@@ -104,6 +106,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.message.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", contacts.get(position).getPhone_no(), null));
             context.startActivity(intent);
+        });
+        holder.video_call.setOnClickListener(v ->{
+            if(toast != null){
+                toast.cancel();
+            }
+            toast = Toast.makeText(context, "This feature is coming soon !!", Toast.LENGTH_SHORT);
+            toast.show();
         });
     }
 
