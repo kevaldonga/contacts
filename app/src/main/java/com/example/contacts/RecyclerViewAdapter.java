@@ -60,9 +60,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         holder.name.setText(contacts.get(position).getName());
         holder.phone_no.setText(contacts.get(position).getPhone_no());
+        if(Contact.selectedItems == 0){
         appTitle.setVisibility(View.VISIBLE);
         remove_all.setVisibility(View.INVISIBLE);
         selectedItems.setVisibility(View.INVISIBLE);
+        }
         Glide.with(context).asBitmap().load(contacts.get(position).getImageUrl()).into(holder.image);
         Log.i("Glide", "Image url for "+contacts.get(position).getName() + " is "+contacts.get(position).getImageUrl());
         holder.parent.setOnClickListener(v -> {
