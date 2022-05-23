@@ -20,10 +20,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
-    ArrayList<Contact> contacts;
+    List<Contact> contacts;
     ImageButton remove_all;
     TextView selected_items, appTitle;
 
@@ -36,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
             setContacts();
-        }
-        else {
+        } else {
             Toast.makeText(this, "Please allow permissions to work with us !!", Toast.LENGTH_SHORT).show();
         }
     }
@@ -47,11 +49,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ask_permissions();
         remove_all = findViewById(R.id.remove_all);
         selected_items = findViewById(R.id.selected_items);
         recyclerView = findViewById(R.id.recycler_view);
         appTitle = findViewById(R.id.app_title);
+        ask_permissions();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -80,9 +82,11 @@ public class MainActivity extends AppCompatActivity {
                 if (cursor.getPosition() > 1) {
                     cursor.moveToPrevious();
                     String old_name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    String old_num = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
                     cursor.moveToNext();
                     String new_name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                    if (old_name.equals(new_name)) {
+                    String new_num = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    if (old_name.equals(new_name) && old_num.equals(new_num)) {
                         i++;
                         Log.i("contacts_details", "Duplicate of " + old_name + " found");
                         Log.i("contacts_details", i + " Duplicate Contacts found so far");
@@ -101,6 +105,12 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(this, selected_items, appTitle, remove_all);
+        Collections.sort(contacts, new Comparator<Contact>() {
+            @Override
+            public int compare(Contact o1, Contact o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
         recyclerViewAdapter.setContacts(contacts);
         recyclerView.setAdapter(recyclerViewAdapter);
     }

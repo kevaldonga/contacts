@@ -25,13 +25,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.viewHolder> {
 
-    ArrayList<Contact> contacts = new ArrayList<>();
-    ArrayList<Contact> selected_contacts = new ArrayList<>();
+    List<Contact> contacts = new ArrayList<>();
+    List<Contact> selected_contacts = new ArrayList<>();
     TextView selectedItems,appTitle;
     ImageButton remove_all;
     Context context;
@@ -165,7 +166,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         selected_contacts.clear();
     }
 
-    public void setContacts(ArrayList<Contact> contacts) {
+    public void setContacts(List<Contact> contacts) {
         this.contacts = contacts;
         notifyDataSetChanged();
     }
