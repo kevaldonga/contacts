@@ -8,7 +8,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Patterns;
 import android.widget.Button;
-
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -16,6 +15,7 @@ public class Register extends AppCompatActivity {
     Button log_in, sign_up;
     TextInputLayout email, password;
     TextInputEditText emailEdittext,passwordEdittext,usernameEdittext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
