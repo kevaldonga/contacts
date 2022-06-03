@@ -14,8 +14,10 @@
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/ic_video_call.xml" value="0.177" />
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/item_background.xml" value="0.177" />
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/seleted_item_background.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/activity_log_in.xml" value="0.23229166666666667" />
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/activity_main.xml" value="0.4" />
-        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/item_view.xml" value="0.17844727694090382" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/activity_register.xml" value="0.23229166666666667" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/item_view.xml" value="0.4" />
       </map>
     </option>
   </component>

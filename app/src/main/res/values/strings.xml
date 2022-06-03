@@ -6,4 +6,9 @@
     <string name="call_button">call button</string>
     <string name="message_button">message button</string>
     <string name="videocall_button">Videocall button</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">password</string>
+    <string name="log_in">Log in</string>
+    <string name="sign_up">Sign up</string>
 </resources>
