@@ -11,6 +11,8 @@ import android.widget.Button;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Objects;
+
 public class Register extends AppCompatActivity {
     Button log_in, sign_up;
     TextInputLayout email, password;
@@ -20,6 +22,7 @@ public class Register extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Welcome");
         log_in = findViewById(R.id.log_in);
         sign_up = findViewById(R.id.sign_up);
         email = findViewById(R.id.email);

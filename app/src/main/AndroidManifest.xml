@@ -16,7 +16,6 @@
         android:theme="@style/Theme.Contacts" >
         <activity
             android:name=".Register"
-            android:label="Welcome"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,12 +25,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:exported="true">
         </activity>
     </application>
 
