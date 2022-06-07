@@ -12,13 +12,19 @@
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/ic_cross.xml" value="0.177" />
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/ic_error_logo.xml" value="0.177" />
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/ic_message.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/ic_shut_down.xml" value="0.177" />
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/ic_video_call.xml" value="0.177" />
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/item_background.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/item_background_expanded.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/selected_item_background.xml" value="0.177" />
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/seleted_item_background.xml" value="0.177" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/drawable/splash_screen.xml" value="0.177" />
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/activity_log_in.xml" value="0.23229166666666667" />
-        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/activity_main.xml" value="0.4" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/activity_main.xml" value="0.3963963963963964" />
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/activity_register.xml" value="0.23229166666666667" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/activity_splash_screen.xml" value="0.176" />
         <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/item_view.xml" value="0.4" />
+        <entry key="..\:/Users/Dell/.gradle/wrapper/Contacts/app/src/main/res/layout/loading_dialog.xml" value="0.23229166666666667" />
       </map>
     </option>
   </component>

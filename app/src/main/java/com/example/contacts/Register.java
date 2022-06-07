@@ -2,6 +2,7 @@ package com.example.contacts;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,9 +28,16 @@ public class Register extends AppCompatActivity {
     loading_alertdialog_box mloading_alertdialog_box;
 
     @Override
+    public void onBackPressed() {
+        finishAffinity();
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        intial_tasks();
         Objects.requireNonNull(getSupportActionBar()).setTitle("Welcome");
         log_in = findViewById(R.id.log_in);
         sign_up = findViewById(R.id.sign_up);
@@ -45,7 +53,6 @@ public class Register extends AppCompatActivity {
         emailEdittext.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -64,13 +71,11 @@ public class Register extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
         passwordEdittext.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -89,7 +94,6 @@ public class Register extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
         log_in.setOnClickListener(v -> {
@@ -103,15 +107,18 @@ public class Register extends AppCompatActivity {
                     .addOnCompleteListener(Register.this, task -> {
                         if (task.isSuccessful()) {
                             Log.i("users", "User with email id - " + email + " has been logged in.");
+                            Toast.makeText(this, "Logged in successfully !!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
                         } else {
-                            Log.i("users", "Error occurred while trying to log in a user with email id of " + password);
+                            Log.i("users", "Error occurred while trying to log in a user with email id of " + email);
+                            Toast.makeText(this, "There was an error occurred !!", Toast.LENGTH_SHORT).show();
                             mloading_alertdialog_box.dismiss();
                             return;
                         }
                         mloading_alertdialog_box.dismiss();
                     });
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
+
         });
         sign_up.setOnClickListener(v -> {
             if (preCheck()) {
@@ -124,16 +131,32 @@ public class Register extends AppCompatActivity {
                     .addOnCompleteListener(Register.this, task -> {
                         if (task.isSuccessful()) {
                             Log.i("users", "User with email id - " + email + " has been created.");
+                            Toast.makeText(this, "Account created successfully !!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
                         } else {
                             Log.i("users", "Error occurred while creating user with email id of " + password);
+                            Toast.makeText(this, "There was an error occurred !!", Toast.LENGTH_SHORT).show();
                             mloading_alertdialog_box.dismiss();
                             return;
                         }
                         mloading_alertdialog_box.dismiss();
                     });
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
         });
+    }
+
+    private void intial_tasks() {
+        loading_alertdialog_box mloading_alertdialog_box = new loading_alertdialog_box(Register.this);
+        mloading_alertdialog_box.start_dialog_box();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            mloading_alertdialog_box.dismiss();
+            return;
+        }
+        mloading_alertdialog_box.dismiss();
+        Toast.makeText(this, "Logged in as " + user.getEmail(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
     }
 
     private boolean preCheck() {

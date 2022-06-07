@@ -2,11 +2,13 @@ package com.example.contacts;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -19,6 +21,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,8 +32,14 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<Contact> contacts;
-    ImageButton remove_all;
+    ImageButton remove_all, shut_down;
     TextView selected_items, appTitle;
+
+    @Override
+    public void onBackPressed() {
+        finishAffinity();
+        finish();
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -54,7 +65,14 @@ public class MainActivity extends AppCompatActivity {
         selected_items = findViewById(R.id.selected_items);
         recyclerView = findViewById(R.id.recycler_view);
         appTitle = findViewById(R.id.app_title);
+        shut_down = findViewById(R.id.log_out);
         ask_permissions();
+        shut_down.setOnClickListener(v ->{
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            firebaseAuth.signOut();
+            Toast.makeText(this, "Signing out...", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getApplicationContext(),Register.class));
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -80,20 +98,6 @@ public class MainActivity extends AppCompatActivity {
             while (cursor.moveToNext() && cursor != null) {
                 name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 phone_no = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                if (cursor.getPosition() > 1) {
-                    cursor.moveToPrevious();
-                    String old_name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                    String old_num = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    cursor.moveToNext();
-                    String new_name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                    String new_num = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    if (old_name.equals(new_name) && old_num.equals(new_num)) {
-                        i++;
-                        Log.i("contacts_details", "Duplicate of " + old_name + " found");
-                        Log.i("contacts_details", i + " Duplicate Contacts found so far");
-                        continue;
-                    }
-                } // Duplicate contact checking
                 // removing all spaces from phone no's
                 phone_no = phone_no.replaceAll(" ", "");
                 contacts.add(new Contact(name, phone_no));
@@ -112,7 +116,30 @@ public class MainActivity extends AppCompatActivity {
                 return o1.getName().compareTo(o2.getName());
             }
         });
+        removeDuplicate();
         recyclerViewAdapter.setContacts(contacts);
         recyclerView.setAdapter(recyclerViewAdapter);
+    }
+
+    private void removeDuplicate() {
+        String oldName,oldNum,newName,newNum;
+        int dpc = 0;
+        for(int i = 0; i < contacts.size(); i++){
+            if(i == contacts.size() - 1){
+                break;
+            }
+            oldName = contacts.get(i).getName();
+            oldNum = contacts.get(i).getPhone_no();
+            i++;
+            newName = contacts.get(i).getName();
+            newNum = contacts.get(i).getPhone_no();
+            i--;
+            if(oldName.equals(newName) && oldNum.equals(newNum)){
+                contacts.remove(i);
+                Log.i("contacts_details", "removing duplicate contact - " + oldName);
+                dpc++;
+            }
+        }
+        Log.i("contacts_details", "total duplicate contacts - " + dpc);
     }
 }
