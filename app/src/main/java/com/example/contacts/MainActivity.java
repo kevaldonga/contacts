@@ -3,12 +3,12 @@ package com.example.contacts;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -21,19 +21,31 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<Contact> contacts;
+    Map<String, String> map;
     ImageButton remove_all, shut_down;
     TextView selected_items, appTitle;
+    Intent intent;
+    boolean registered;
+    FirebaseFirestore db;
+    FirebaseAuth auth;
+    FirebaseUser user;
+    SharedPreferences sharedPreferences;
 
     @Override
     public void onBackPressed() {
@@ -66,13 +78,46 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view);
         appTitle = findViewById(R.id.app_title);
         shut_down = findViewById(R.id.log_out);
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        sharedPreferences = getSharedPreferences("username", MODE_PRIVATE);
+        map = new HashMap<>();
+        db = FirebaseFirestore.getInstance();
+        intent = getIntent();
         ask_permissions();
-        shut_down.setOnClickListener(v ->{
+        String info = intent.getStringExtra("data");
+        if (info == null) {
+            Log.i("intent", "intent extra data value found to be null");
+        }
+//        else if(info.equals("register")) {
+//            registered = true;
+//        }
+        shut_down.setOnClickListener(v -> {
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             firebaseAuth.signOut();
             Toast.makeText(this, "Signing out...", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(getApplicationContext(),Register.class));
+            startActivity(new Intent(getApplicationContext(), Register.class));
         });
+    }
+
+    private void uploadData() {
+        contactsToMap();
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        db.collection("users")
+                .document(sharedPreferences.getString(sharedPreferences.getString("email", ""), "Anonymous"))
+                .set(map)
+                .addOnFailureListener(e -> Log.i("firestore", e.toString()))
+                .addOnSuccessListener(unused -> Log.i("firestore", "data uploaded successfully"));
+    }
+
+    private void contactsToMap() {
+        String name, phoneNo;
+        for (int i = 0; i < contacts.size(); i++) {
+            name = contacts.get(i).getName();
+            phoneNo = contacts.get(i).getPhone_no();
+            map.put(name, phoneNo);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -117,15 +162,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         removeDuplicate();
+        uploadData();
         recyclerViewAdapter.setContacts(contacts);
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 
     private void removeDuplicate() {
-        String oldName,oldNum,newName,newNum;
+        String oldName, oldNum, newName, newNum;
         int dpc = 0;
-        for(int i = 0; i < contacts.size(); i++){
-            if(i == contacts.size() - 1){
+        for (int i = 0; i < contacts.size(); i++) {
+            if (i == contacts.size() - 1) {
                 break;
             }
             oldName = contacts.get(i).getName();
@@ -134,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
             newName = contacts.get(i).getName();
             newNum = contacts.get(i).getPhone_no();
             i--;
-            if(oldName.equals(newName) && oldNum.equals(newNum)){
+            if (oldName.equals(newName) && oldNum.equals(newNum)) {
                 contacts.remove(i);
                 Log.i("contacts_details", "removing duplicate contact - " + oldName);
                 dpc++;
