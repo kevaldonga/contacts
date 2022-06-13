@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -33,15 +34,18 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
+    RecyclerViewAdapter recyclerViewAdapter;
     List<Contact> contacts;
-    Map<String, String> map;
+    Map<String, Object> map;
     ImageButton remove_all, shut_down;
     TextView selected_items, appTitle;
     Intent intent;
-    boolean registered;
+    boolean isOPRunning = false;
+    boolean registered = false;
     FirebaseFirestore db;
     FirebaseAuth auth;
     FirebaseUser user;
@@ -60,9 +64,13 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode != 202) {
             return;
         }
+        if(isOPRunning){
+            return;
+        }
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+            isOPRunning = true;
             setContacts();
-        } else {
+        } else if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED && grantResults[1] == PackageManager.PERMISSION_DENIED && grantResults[2] == PackageManager.PERMISSION_DENIED){
             Toast.makeText(this, "Please allow permissions to work with us !!", Toast.LENGTH_SHORT).show();
         }
     }
@@ -85,13 +93,6 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         intent = getIntent();
         ask_permissions();
-        String info = intent.getStringExtra("data");
-        if (info == null) {
-            Log.i("intent", "intent extra data value found to be null");
-        }
-//        else if(info.equals("register")) {
-//            registered = true;
-//        }
         shut_down.setOnClickListener(v -> {
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             firebaseAuth.signOut();
@@ -131,30 +132,40 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setContacts() {
         contacts = new ArrayList<>();
-        ContentResolver contentResolver = getContentResolver();
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-        Cursor cursor = contentResolver.query(uri, null, null, null);
-        String name, phone_no;
-        int i = 0;
-        if (cursor != null) {
-            cursor.moveToFirst();
+        intent = getIntent();
+        String info = intent.getStringExtra("data");
+        if (info.equals("login")) {
+            registered = false;
+            downloadData();
+            return;
         }
-        if (cursor.getCount() > 0) {
-            while (cursor.moveToNext() && cursor != null) {
-                name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                phone_no = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                // removing all spaces from phone no's
-                phone_no = phone_no.replaceAll(" ", "");
-                contacts.add(new Contact(name, phone_no));
-                Log.i("contacts_details", "Contact name --" + name);
-                Log.i("contacts_details", "Contact phone no --" + phone_no);
-                Log.i("contacts_details", "Current position --" + cursor.getPosition());
+        else {
+            registered = true;
+            ContentResolver contentResolver = getContentResolver();
+            Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+            Cursor cursor = contentResolver.query(uri, null, null, null);
+            String name, phone_no;
+            int i = 0;
+            if (cursor != null) {
+                cursor.moveToFirst();
             }
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext() && cursor != null) {
+                    name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    phone_no = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    // removing all spaces from phone no's
+                    phone_no = phone_no.replaceAll(" ", "");
+                    contacts.add(new Contact(name, phone_no));
+                    Log.i("contacts_details", "Contact name --" + name);
+                    Log.i("contacts_details", "Contact phone no --" + phone_no);
+                    Log.i("contacts_details", "Current position --" + cursor.getPosition());
+                }
+            }
+            Log.i("contacts_details", "total contacts in your phone is " + cursor.getCount());
+            cursor.close();
         }
-        Log.i("contacts_details", "total contacts in your phone is " + cursor.getCount());
-        cursor.close();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(this, selected_items, appTitle, remove_all);
+        recyclerViewAdapter = new RecyclerViewAdapter(this, selected_items, appTitle, remove_all);
         Collections.sort(contacts, new Comparator<Contact>() {
             @Override
             public int compare(Contact o1, Contact o2) {
@@ -162,9 +173,54 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         removeDuplicate();
-        uploadData();
+        if (registered) {
+            uploadData();
+        }
         recyclerViewAdapter.setContacts(contacts);
         recyclerView.setAdapter(recyclerViewAdapter);
+    }
+
+    private void downloadData() {
+        db = FirebaseFirestore.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        map = new HashMap<>();
+        sharedPreferences = getSharedPreferences("username", MODE_PRIVATE);
+        String username = sharedPreferences.getString(user.getEmail(), "Anonymous");
+        db.collection("users").document(username).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Log.i("firestore", "getting data was successful");
+                        map = documentSnapshot.getData();
+                        Log.i("firestore", map.toString());
+                        Log.i("firestore", username);
+                        mapToContacts();
+                        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                        recyclerViewAdapter = new RecyclerViewAdapter(MainActivity.this, selected_items, appTitle, remove_all);
+                        Collections.sort(contacts, new Comparator<Contact>() {
+                            @Override
+                            public int compare(Contact o1, Contact o2) {
+                                return o1.getName().compareTo(o2.getName());
+                            }
+                        });
+                        recyclerViewAdapter.setContacts(contacts);
+                        recyclerView.setAdapter(recyclerViewAdapter);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i("firestore", e.toString());
+                    }
+                });
+    }
+
+    private void mapToContacts() {
+        contacts = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            contacts.add(new Contact(entry.getKey(), entry.getValue().toString()));
+        }
+        Log.i("firestore", "converting map to contacts were successful " + contacts.size());
     }
 
     private void removeDuplicate() {

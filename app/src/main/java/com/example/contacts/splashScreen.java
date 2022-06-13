@@ -26,18 +26,14 @@ public class splashScreen extends AppCompatActivity {
     }
 
     private void intial_tasks() {
-        loading_alertdialog_box mloading_alertdialog_box = new loading_alertdialog_box(splashScreen.this);
-        mloading_alertdialog_box.start_dialog_box();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        intent.putExtra("data", "login");
         if (user == null) {
-            SystemClock.sleep(1000);
-            mloading_alertdialog_box.dismiss();
             startActivity(new Intent(getApplicationContext(),Register.class));
             return;
         }
-        SystemClock.sleep(1000);
-        mloading_alertdialog_box.dismiss();
         Toast.makeText(this, "Logged in as " + user.getEmail(), Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        startActivity(intent);
     }
 }

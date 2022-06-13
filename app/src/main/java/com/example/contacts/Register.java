@@ -204,14 +204,10 @@ public class Register extends AppCompatActivity {
     }
 
     private void intial_tasks() {
-        loading_alertdialog_box mloading_alertdialog_box = new loading_alertdialog_box(Register.this);
-        mloading_alertdialog_box.start_dialog_box();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            mloading_alertdialog_box.dismiss();
             return;
         }
-        mloading_alertdialog_box.dismiss();
         Toast.makeText(this, "Logged in as " + user.getEmail(), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.putExtra("data", "login");
